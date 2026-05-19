@@ -57,7 +57,7 @@ Z = P("")  # zero
 
 
 def CommT(t, d):  # commutator with t (at order d)
-    return lambda h, i: (1.0 / i) * (h ^ t).expand((d - i) * 4).simplify()
+    return lambda h, i: (1.0 / i) * (h ^ t).expand((d + 1 - i) * 6).simplify()
 
 
 def HBar(h, t, d):  # exp(-t) h exp(t) (order d)
@@ -113,7 +113,7 @@ def get_cc_amps_eqs(order):
     if order >= 1:
         print("1...", end="", flush=True)
         tt = time.perf_counter()
-        t1_eq = FC(ex1 * HBar(h, t, 3))
+        t1_eq = FC(ex1 * HBar(h, t, 4))
         t1_eq = t1_eq + P("h[ii]\n - h[aa]") * P("t[ia]")
         fix_eri_permutations(t1_eq)
         # eqs.append(t1_eq.to_einsum(PT("t1new[ia]")))
@@ -131,7 +131,7 @@ def get_cc_amps_eqs(order):
     if order >= 3:
         print("3...", end="", flush=True)
         tt = time.perf_counter()
-        t3_eq = FC(ex3 * HBar(h, t, 5))
+        t3_eq = FC(ex3 * HBar(h, t, 4))
         t3_eq = t3_eq + P(
             "h[ii]\n + h[jj]\n + h[kk]\n - h[aa]\n - h[bb]\n - h[cc]"
         ) * P("t[ijkabc]")
@@ -142,7 +142,7 @@ def get_cc_amps_eqs(order):
     # if order >= 4:
     #     print('4...', end='', flush=True)
     #     tt = time.perf_counter()
-    #     t4_eq = FC(ex4 * HBar(h, t, 6))
+    #     t4_eq = FC(ex4 * HBar(h, t, 4)) # need modification of 'CommT'
     #     t4_eq = t4_eq + P("h[ii]\n + h[jj]\n + h[kk]\n + h[ll]\n - h[aa]\n - h[bb]\n - h[cc]\n - h[dd]") * P("t[ijklabcd]")
     #     fix_eri_permutations(t4_eq)
     #     # eqs.append(t4_eq.to_einsum(PT("t4new[ijklabcd]")))
@@ -435,12 +435,11 @@ if __name__ == "__main__":
     wccsd = GCCSD(mf).run()
     wccsdt = GCCSDT(mf).run()
     # wccsdtq = GCCSDTQ(mf).run()
-
-    # 1...   3.880 sec ->  0.647 sec ->  0.533 sec
-    # 2...  15.781 sec ->  2.584 sec ->  2.194 sec
-    # 3... 102.674 sec -> 14.604 sec -> 12.316 sec
+    # 1... 24.889 sec
+    # 2... 25.041 sec
+    # 3... 34.706 sec
     # pvdz basis / 204 sec -> 53 sec per iter
     # E(HF)     = -76.0167894720743
     # E(GCCSD)  = -76.23486336279412
     # E(T)(ref) =  -0.003466431834820524
-    # E(GCCSDT) = -76.2385041072569
+    # E(GCCSDT) = -76.2385041145114
