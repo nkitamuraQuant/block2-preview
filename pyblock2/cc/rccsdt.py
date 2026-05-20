@@ -958,7 +958,7 @@ if __name__ == "__main__":
 
     mcc = RCCSDT(mf, verbose=4, diis=False)
     mcc.kernel()
-    assert abs(mcc.e_tot - -76.2385041073466) < 1E-6
+    assert abs(mcc.e_tot - -76.2385041145114) < 1E-6
     print('E-ip (right) = ', mcc.ipccsd()[0])
     print('E-ip ( left) = ', mcc.ipccsd(left=True)[0])
     print('E-ea (right) = ', mcc.eaccsd()[0])
