@@ -37,16 +37,18 @@ jobs:
           - os: windows-2025-vs2026
             parallel: mpi
           - os: windows-2025-vs2026
+            parallel: serial
+          - os: windows-2025-vs2026
             plat: arm64
           - os: ubuntu-24.04-arm
             parallel: mpi
           - os: ubuntu-24.04-arm
             plat: x86_64
-        include:
-          - os: ubuntu-24.04
-            python: '3.12'
-            plat: wasm
-            parallel: serial
+        # include:
+        #   - os: ubuntu-24.04
+        #     python: '3.12'
+        #     plat: wasm
+        #     parallel: serial
       fail-fast: false
 
     steps:
@@ -145,7 +147,8 @@ jobs:
           Get-CimInstance -Class Win32_Processor
           git clone -b release-1.8.0 https://github.com/google/googletest.git
           cd googletest
-          cmake -G "Visual Studio 18 2026" -A x64 -S . -B . -DCMAKE_CXX_FLAGS="-D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING" `
+          cmake -G "Visual Studio 18 2026" -A x64 -S . -B . `
+            -DCMAKE_CXX_FLAGS="-D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING -DGTEST_HAS_TR1_TUPLE=0 -DGTEST_HAS_CXX11_TUPLE=1" `
             -Dgtest_force_shared_crt=ON -DCMAKE_POLICY_VERSION_MINIMUM="3.5"
           cmake --build . -j 2 --config Release
           cmake --install . --prefix $env:GTEST_ROOT
@@ -697,7 +700,7 @@ jobs:
           $env:PATH = "$($vcpath[0].FullName)\bin\Hostx64\x64;" + $env:PATH
           $rr = Get-ChildItem -Path dist/*.whl
           Write-Output "$($rr[0].FullName)"
-          delvewheel repair "$($rr[0].FullName)" -v -w dist
+          delvewheel repair "$($rr[0].FullName)" -v -w dist --no-mangle libiomp5md.dll
 
       - name: build wheels (macos-arm64)
         if: startsWith(github.ref, 'refs/tags/') && matrix.os == 'macos-15' && matrix.plat == 'arm64'
@@ -959,7 +962,7 @@ jobs:
           cd openmpi-5.0.5
           ./configure --prefix=/usr/local |& tee config.out
           make -j 4 |& tee make.out
-          make install |& tee install.out
+          sudo make install |& tee install.out
           cd ..
 
       - name: install block2 (windows)
@@ -969,6 +972,7 @@ jobs:
         run: |
           $tagstr = ${env:TAG_STRING}.Substring(11)
           echo $tagstr
+          python -m pip install intel-openmp==2024.1.0
           python -m pip install "block2==${tagstr}" --extra-index-url=https://block-hczhai.github.io/block2-preview/pypi/
 
       - name: install block2 (linux / macos)
