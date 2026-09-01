@@ -2,7 +2,7 @@ import numpy as np
 from itertools import product
 from pyscf.pbc.lib import kpts_helper
 import sys
-sys.path.insert(0, "/Users/qclove00/block2-preview/build-k")
+sys.path.insert(0, "/Users/qclove00/Desktop/block2-preview/build-k")
 
 
 def _block2_k_labels_1d(cell, kpts, kmesh):
