@@ -1,0 +1,3 @@
+cmake .. -DCMAKE_BUILD_TYPE=Release -DPython3_EXECUTABLE_HINT=/Users/qclove00/miniforge3/bin/python -DCMAKE_CXX_FLAGS=-I/Users/qclove00/miniforge3/include -DCMAKE_C_FLAGS=-I/Users/qclove00/miniforge3/include -DBUILD_LIB=ON -DBUILD_EXE=OFF -DUSE_MKL=OFF -DLARGE_BOND=ON -DUSE_KSYMM=ON -DUSE_COMPLEX=ON -DUSE_SINGLE_PREC=OFF -DUSE_SG=OFF -DUSE_SANY=OFF -DUSE_BIG_SITE=OFF -DUSE_SP_DMRG=OFF -DUSE_IC=OFF
+
+cmake --build . --config Release -- -j2
